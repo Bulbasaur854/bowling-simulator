@@ -8,11 +8,10 @@ class BowlerStats:
     axis_rotation: float   # e.g., 55 degrees (side roll)
     axis_tilt: float       # e.g., 12 degrees (spin)
     
-    # Standard deviations, lower is better. 
-    # A pro might be 0.5 boards, an amateur 3.0.
-    board_deviation: float  # Variance in hitting the target board
-    speed_deviation: float  # Variance in speed control (e.g., +/- 0.2 mph)
-    revs_deviation: float # Variance in rev rate (e.g., +/- 20 rpm)
+    # Standard deviations, lower is better
+    board_deviation: float
+    speed_deviation: float
+    revs_deviation: float
 
 class Bowler:
     def __init__(self, name, stats: BowlerStats):

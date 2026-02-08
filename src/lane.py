@@ -5,12 +5,10 @@ class Lane:
     self.name = name
     self.length_ft = length_ft
     self.oil_ratio = oil_ratio
-
     # Lane is 39 boards wide and 60 feet long devided into 0.1ft increments
     # Resolution: 39 x 600
     self.grid = np.zeros((39, 600))
 
-    # Apply pattern to the lane
     self._apply_oil_pattern()
 
   def _apply_oil_pattern(self):
@@ -42,8 +40,12 @@ class Lane:
   def get_friction(self, board, distance_ft):
     """
     Returns the friction coefficient at a specific point.
-    board: 1.0 to 39.0 (float)
-    distance_ft: 0.0 to 60.0 (float)
+    Friction is the inverse of oil volume.
+    0 oil   =     1.0 friction (full hook potential)
+    1.0 oil =     0.0 friction (skidding)
+    
+    board:        1.0 to 39.0 (float)
+    distance_ft:  0.0 to 60.0 (float)
     """
     if distance_ft >= 60: return 0.0 # Pin deck is dry
     
@@ -51,9 +53,6 @@ class Lane:
     x_idx = int(np.clip(board - 1, 0, 38))
     y_idx = int(np.clip(distance_ft * 10, 0, 599))
     
-    # Friction is the inverse of oil volume
-    # 0 oil = 1.0 friction (full hook potential)
-    # 1.0 oil = 0.0 friction (skidding)
     oil_volume = self.grid[x_idx, y_idx]
 
     return 1.0 - oil_volume
