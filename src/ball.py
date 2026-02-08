@@ -7,4 +7,4 @@ class Ball:
         self.mass_bias = mass_bias
         self.grit = grit
         self.cover_type = cover_type
-        self.surfacte_friction_modifier = 2000 / self.grit
+        self.surface_friction_modifier = 2000 / self.grit
