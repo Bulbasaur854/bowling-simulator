@@ -2,46 +2,47 @@ import random
 from dataclasses import dataclass
 
 @dataclass
-class BowlerStats:
-    rev_rate: int          # e.g., 450 RPM
-    ball_speed: float      # e.g., 17.0 MPH (at release)
-    axis_rotation: float   # e.g., 55 degrees (side roll)
-    axis_tilt: float       # e.g., 12 degrees (spin)
-    
-    # Standard deviations, lower is better
-    board_deviation: float
-    speed_deviation: float
-    revs_deviation: float
+class BowlerStats:  
+    approach_drift: float           # e.g., +2.0 (Slides left of stance)
+    arm_swing_offset: float         # e.g., -7.0 (Ball is 7 boards right of slide)
+    ball_speed: float               # e.g., 17.0 mph
+    rev_rate: int                   # e.g., 400 rpm
+    axis_rotation: float            # e.g., 55 degrees
+    axis_tilt: float                # e.g., 10 degrees
+
+    # Standard deviations to represent skill
+    # Value of 0 is the most accurate bowler
+    drift_consistency: float        # Variance in sliding
+    target_accuracy: float          # Variance in hitting arrows
+    speed_control: float            # Variance in speed
+    rev_consistency: int            # Variance in revs
+    rotation_consistency: float     # Variance in hand position (e.g., +/- 5 degrees)
+    tilt_consistency: float         # Variance in spin axis (e.g., +/- 2 degrees)
 
 class Bowler:
     def __init__(self, name, stats: BowlerStats):
         self.name = name
         self.stats = stats
 
-    def release_shot(self, target_board, target_speed_modifier=0.0):
-        """
-        Calculates the actual release parameters based on the intended target
-        and the bowler's consistency stats.
-        
-        target_board: The board the bowler is trying to hit at the arrows (15ft).
-        target_speed_modifier: Adjusts base speed (e.g., -1.0 for a slow hook).
-        """
-        
-        # 1. Calculate Actual Speed (Base + Modifier + Variance)
-        intended_speed = self.stats.ball_speed + target_speed_modifier
-        actual_speed = random.gauss(intended_speed, self.stats.speed_deviation)
-        
-        # 2. Calculate Actual Rev Rate (Base + Variance)
-        actual_revs = random.gauss(self.stats.rev_rate, self.stats.revs_deviation)
-        
-        # 3. Calculate Actual Target Hit (Intended Board + Variance)
-        # We assume the bowler is aiming at the arrows (15ft mark)
-        actual_board_at_arrows = random.gauss(target_board, self.stats.board_deviation)
-        
+    def throw_ball(self, stance_board, target_board):        
+        actual_drift = random.gauss(self.stats.approach_drift, self.stats.drift_consistency)
+        slide_point = stance_board + actual_drift
+        laydown_point = slide_point - self.stats.arm_swing_offset
+        actual_target = random.gauss(target_board, self.stats.target_accuracy)
+        launch_speed = random.gauss(self.stats.ball_speed, self.stats.speed_control)
+        launch_revs = random.gauss(self.stats.rev_rate, self.stats.rev_consistency)
+        actual_rotation = random.gauss(self.stats.axis_rotation, self.stats.rotation_consistency)
+        actual_tilt = max(0, random.gauss(self.stats.axis_tilt, self.stats.tilt_consistency))
+
+        print(f"Throwing Ball\n")
+        print(f" Stance {stance_board} -> Slide {slide_point:.1f}")
+        print(f" Aim at board {target_board} [arrow {int(target_board/5)}]\n")
+
         return {
-            "speed": round(actual_speed, 2),
-            "revs": int(actual_revs),
-            "board_at_arrows": round(actual_board_at_arrows, 2),
-            "axis_rotation": self.stats.axis_rotation, # Assuming constant for now
-            "axis_tilt": self.stats.axis_tilt
+            "laydown_point": (laydown_point, 0.0),
+            "aim_point": (actual_target, 15.0),
+            "launch_speed": launch_speed,
+            "launch_revs": launch_revs,
+            "axis_rotation": actual_rotation,
+            "axis_tilt": actual_tilt
         }

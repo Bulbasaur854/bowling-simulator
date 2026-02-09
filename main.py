@@ -8,7 +8,7 @@ def test_stuff():
     physics_engine = PhysicsEngine(lane)
 
     black_widow = Ball(
-        name="Hammer Black Widow 3.0 Dynasty",
+        name="Black Widow",
         weight=15,
         rg=2.5,
         diff=0.058,
@@ -26,34 +26,42 @@ def test_stuff():
         cover_type="Plastic"
     )
 
-    pro_stats = BowlerStats(
-        rev_rate=450, 
-        ball_speed=18.0, 
-        axis_rotation=60, 
+    my_stats = BowlerStats(
+        rev_rate=450,
+        ball_speed=18.0,
+        approach_drift=-5,
+        arm_swing_offset=7,
+        axis_rotation=60,
         axis_tilt=10,
-        board_deviation=0.5, # Very tight targeting (+/- 0.5 boards)
-        speed_deviation=0.2, # Precision speed control
-        revs_deviation=15 # Consistent release
+        rev_consistency=30,
+        speed_control=1,
+        target_accuracy=2,
+        drift_consistency=0.5,
+        rotation_consistency=2,
+        tilt_consistency=2
     )
-    player = Bowler("Jason B.", pro_stats)
-
-    print(f"\n{'='*40}")
-    print(f" NOW BOWLING: {player.name}")
-    print(f" Ball: {black_widow.name} ({black_widow.cover_type})")
-    print(f" Pattern: {lane.name} ({lane.length_ft}ft)")
-    print(f"{'='*40}\n")
     
-    shot_params = player.release_shot(target_board=15)
-    print(f"{'='*40}")
-    print(f" Speed: {shot_params["speed"]}")
-    print(f" Revs: {shot_params["revs"]}")
-    print(f" Board at arrows: {shot_params["board_at_arrows"]}")
-    print(f" Axis rotation: {shot_params["axis_rotation"]}")
-    print(f" Axis tilt: {shot_params["axis_tilt"]}")
-    print(f"{'='*40}\n")
+    print(f"{'-'*16}")
 
-    result = physics_engine.simulate_shot(black_widow, shot_params)
-    print(f"{result}")
+    bowler = Bowler("Tair S.", my_stats)
+    result = bowler.throw_ball(20, 10)
+
+    laydown_point = result["laydown_point"]
+    aim_point = result["aim_point"]
+    launch_speed = result["launch_speed"]
+    launch_revs = result["launch_revs"]
+    axis_rotation = result["axis_rotation"]
+    axis_tilt = result["axis_tilt"]
+
+    print(f"Shot Results\n")
+    print(f" Release board: {laydown_point[0]:.2f}")
+    print(f" Hit board: {aim_point[0]:.2f}")
+    print(f" Launch speed: {launch_speed:.2f}")
+    print(f" Launch revs: {launch_revs:.2f}")
+    print(f" Rotation: {axis_rotation:.2f}")
+    print(f" Tilt: {axis_tilt:.2f}")
+
+    print(f"{'-'*16}")
 
 if __name__ == "__main__":
     test_stuff()
