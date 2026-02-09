@@ -46,20 +46,20 @@ def test_stuff():
     bowler = Bowler("Tair S.", my_stats)
     result = bowler.throw_ball(20, 10)
 
-    laydown_point = result["laydown_point"]
-    aim_point = result["aim_point"]
-    launch_speed = result["launch_speed"]
-    launch_revs = result["launch_revs"]
-    axis_rotation = result["axis_rotation"]
-    axis_tilt = result["axis_tilt"]
+    # laydown_point = result["laydown_point"]
+    # aim_point = result["aim_point"]
+    # launch_speed = result["launch_speed"]
+    # launch_revs = result["launch_revs"]
+    # axis_rotation = result["axis_rotation"]
+    # axis_tilt = result["axis_tilt"]
 
-    print(f"Shot Results\n")
-    print(f" Release board: {laydown_point[0]:.2f}")
-    print(f" Hit board: {aim_point[0]:.2f}")
-    print(f" Launch speed: {launch_speed:.2f}")
-    print(f" Launch revs: {launch_revs:.2f}")
-    print(f" Rotation: {axis_rotation:.2f}")
-    print(f" Tilt: {axis_tilt:.2f}")
+    # print(f"Shot Results\n")
+    # print(f" Release board: {laydown_point[0]:.2f}")
+    # print(f" Hit board: {aim_point[0]:.2f}")
+    # print(f" Launch speed: {launch_speed:.2f}")
+    # print(f" Launch revs: {launch_revs:.2f}")
+    # print(f" Rotation: {axis_rotation:.2f}")
+    # print(f" Tilt: {axis_tilt:.2f}")
 
     print(f"{'-'*16}")
 

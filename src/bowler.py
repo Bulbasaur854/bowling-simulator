@@ -34,9 +34,9 @@ class Bowler:
         actual_rotation = random.gauss(self.stats.axis_rotation, self.stats.rotation_consistency)
         actual_tilt = max(0, random.gauss(self.stats.axis_tilt, self.stats.tilt_consistency))
 
-        print(f"Throwing Ball\n")
-        print(f" Stance {stance_board} -> Slide {slide_point:.1f}")
-        print(f" Aim at board {target_board} [arrow {int(target_board/5)}]\n")
+        # print(f"Throwing Ball\n")
+        # print(f" Stance {stance_board} -> Slide {slide_point:.1f}")
+        # print(f" Aim at board {target_board} [arrow {int(target_board/5)}]\n")
 
         return {
             "laydown_point": (laydown_point, 0.0),
