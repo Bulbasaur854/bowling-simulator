@@ -29,7 +29,7 @@ def test_stuff():
     my_stats = BowlerStats(
         rev_rate=450,
         ball_speed=18.0,
-        approach_drift=-5,
+        approach_drift=5,
         arm_swing_offset=7,
         axis_rotation=60,
         axis_tilt=10,
@@ -44,22 +44,27 @@ def test_stuff():
     print(f"{'-'*16}")
 
     bowler = Bowler("Tair S.", my_stats)
-    result = bowler.throw_ball(20, 10)
+    throw_result = bowler.throw_ball(20, 7)
+    simulation_result = physics_engine.simulate_shot(black_widow, throw_result)
+    print("\nShot Results")
+    print(f" impact board: {simulation_result["impact_board"]}")
+    print(f" entry angle: {simulation_result["entry_angle"]}")
+    print(f" velocity at impact: {simulation_result["velocity_at_impact"]:.2f}")
 
     # laydown_point = result["laydown_point"]
-    # aim_point = result["aim_point"]
+    # actual_target = result["actual_target"]
     # launch_speed = result["launch_speed"]
     # launch_revs = result["launch_revs"]
-    # axis_rotation = result["axis_rotation"]
-    # axis_tilt = result["axis_tilt"]
+    # actual_rotation = result["actual_rotation"]
+    # actual_tilt = result["actual_tilt"]
 
     # print(f"Shot Results\n")
     # print(f" Release board: {laydown_point[0]:.2f}")
-    # print(f" Hit board: {aim_point[0]:.2f}")
+    # print(f" Hit board: {actual_target[0]:.2f}")
     # print(f" Launch speed: {launch_speed:.2f}")
     # print(f" Launch revs: {launch_revs:.2f}")
-    # print(f" Rotation: {axis_rotation:.2f}")
-    # print(f" Tilt: {axis_tilt:.2f}")
+    # print(f" Rotation: {actual_rotation:.2f}")
+    # print(f" Tilt: {actual_tilt:.2f}")
 
     print(f"{'-'*16}")
 
