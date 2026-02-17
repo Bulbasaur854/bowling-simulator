@@ -2,6 +2,7 @@ from src.ball import Ball
 from src.bowler import Bowler, BowlerStats
 from src.lane import Lane
 from src.physics import PhysicsEngine
+from src.output import print_lane_path
 
 def test_stuff():
     lane = Lane()
@@ -27,29 +28,31 @@ def test_stuff():
     )
 
     my_stats = BowlerStats(
-        rev_rate=450,
+        rev_rate=550,
         ball_speed=18.0,
-        approach_drift=5,
-        arm_swing_offset=7,
+        approach_drift=1,
+        arm_swing_offset=4,
         axis_rotation=60,
         axis_tilt=10,
-        rev_consistency=30,
+        rev_consistency=10,
         speed_control=1,
-        target_accuracy=2,
+        target_accuracy=1,
         drift_consistency=0.5,
-        rotation_consistency=2,
-        tilt_consistency=2
+        rotation_consistency=0,
+        tilt_consistency=0
     )
     
     print(f"{'-'*16}")
 
     bowler = Bowler("Tair S.", my_stats)
-    throw_result = bowler.throw_ball(20, 7)
+    throw_result = bowler.throw_ball(24, 10)
     simulation_result = physics_engine.simulate_shot(black_widow, throw_result)
     print("\nShot Results")
     print(f" impact board: {simulation_result["impact_board"]}")
     print(f" entry angle: {simulation_result["entry_angle"]}")
     print(f" velocity at impact: {simulation_result["velocity_at_impact"]:.2f}")
+
+    print_lane_path(simulation_result["path"])
 
     # laydown_point = result["laydown_point"]
     # actual_target = result["actual_target"]
