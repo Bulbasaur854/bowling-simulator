@@ -8,68 +8,78 @@ def test_stuff():
     lane = Lane()
     physics_engine = PhysicsEngine(lane)
 
-    black_widow = Ball(
-        name="Black Widow",
-        weight=15,
-        rg=2.5,
-        diff=0.058,
-        mass_bias=0.016,
-        grit=2000,
-        cover_type="Reactive"
+    # BALLS
+    # -----
+
+    # Weaker, symmetrical solid ball
+    hyroad = Ball(name="Symmetrical Benchmark", weight=15, rg=2.57, diff=0.046, mass_bias=0.0, grit=3000, cover_type="Solid")
+    # Strong, asymmetrical hooking monster
+    widow_assassin = Ball(name="High Asym Solid", weight=15, rg=2.48, diff=0.058, mass_bias=0.024, grit=1000, cover_type="Solid")
+    # Plastic, pancake core
+    white_dot = Ball(name="Plastic Spare", weight=15, rg=2.65, diff=0.010, mass_bias=0.0, grit=5000, cover_type="Plastic")
+
+    # BOWLERS STATS
+    # -------------
+    # Keep consistencies near zero for testing
+
+    # Low revs, low rotation, precision player
+    stroker_stats = BowlerStats(
+        rev_rate=280, 
+        ball_speed=15.5, 
+        approach_drift=0.0, 
+        arm_swing_offset=6.0, 
+        axis_rotation=25.0, # staying up the back of the ball
+        axis_tilt=15.0,        
+        drift_consistency=0.0, target_accuracy=0.0, speed_control=0.0, 
+        rev_consistency=0, rotation_consistency=0.0, tilt_consistency=0.0
     )
-    spare_ball = Ball(
-        name="White Dot",
-        weight=15,
-        rg=2.65,
-        diff=0.01,
-        mass_bias=0.0,
-        grit=5000,
-        cover_type="Plastic"
+    # Huge power, high rotation
+    two_hand_stats = BowlerStats(
+        rev_rate=550, 
+        ball_speed=18.5, 
+        approach_drift=4.0, # deep left stance, drifts even further left
+        arm_swing_offset=5.0, # ball is closer to the body for two-handers
+        axis_rotation=65.0, # heavy side-roll
+        axis_tilt=5.0, # very end-over-end tilt
+        drift_consistency=0.0, target_accuracy=0.0, speed_control=0.0, 
+        rev_consistency=0, rotation_consistency=0.0, tilt_consistency=0.0
+    )
+    # Throwing hard and flat to pick up spares
+    spare_stats = BowlerStats(
+        rev_rate=150, # killing the wrist
+        ball_speed=19.0, # throwing it hard
+        approach_drift=0.0, 
+        arm_swing_offset=7.0, 
+        axis_rotation=10.0, # pure forward roll
+        axis_tilt=5.0,
+        drift_consistency=0.0, target_accuracy=0.0, speed_control=0.0, 
+        rev_consistency=0, rotation_consistency=0.0, tilt_consistency=0.0
     )
 
-    my_stats = BowlerStats(
-        rev_rate=550,
-        ball_speed=18.0,
-        approach_drift=1,
-        arm_swing_offset=4,
-        axis_rotation=60,
-        axis_tilt=10,
-        rev_consistency=10,
-        speed_control=1,
-        target_accuracy=1,
-        drift_consistency=0.5,
-        rotation_consistency=0,
-        tilt_consistency=0
-    )
-    
-    print(f"{'-'*16}")
+    # BOWLERS
+    # -------
 
-    bowler = Bowler("Tair S.", my_stats)
-    throw_result = bowler.throw_ball(24, 10)
-    simulation_result = physics_engine.simulate_shot(black_widow, throw_result)
-    print("\nShot Results")
-    print(f" impact board: {simulation_result["impact_board"]}")
-    print(f" entry angle: {simulation_result["entry_angle"]}")
-    print(f" velocity at impact: {simulation_result["velocity_at_impact"]:.2f}")
+    stroker = Bowler("Norm D.", stroker_stats)
+    two_hander = Bowler("Jason B.", two_hand_stats)
+    beginner = Bowler("Straight Shooter", spare_stats)
 
-    print_lane_path(simulation_result["path"])
+    test_shots = [
+        # (stroker, hyroad, 15.0, 10.0),
+        (two_hander, widow_assassin, 38.0, 20.0),
+        (two_hander, hyroad, 38.0, 20.0),
+        # (beginner, white_dot, 15.0, 15.0)
+    ]
 
-    # laydown_point = result["laydown_point"]
-    # actual_target = result["actual_target"]
-    # launch_speed = result["launch_speed"]
-    # launch_revs = result["launch_revs"]
-    # actual_rotation = result["actual_rotation"]
-    # actual_tilt = result["actual_tilt"]
-
-    # print(f"Shot Results\n")
-    # print(f" Release board: {laydown_point[0]:.2f}")
-    # print(f" Hit board: {actual_target[0]:.2f}")
-    # print(f" Launch speed: {launch_speed:.2f}")
-    # print(f" Launch revs: {launch_revs:.2f}")
-    # print(f" Rotation: {actual_rotation:.2f}")
-    # print(f" Tilt: {actual_tilt:.2f}")
-
-    print(f"{'-'*16}")
+    for player, ball, stance, target in test_shots:
+        print(f"\n{'*'*50}")
+        print(f" TESTING: {player.name} with {ball.name}")
+        print(f"{'*'*50}")
+        
+        shot_params = player.throw_ball(stance, target)
+        result = physics_engine.simulate_shot(ball, shot_params)
+        
+        print(f"Impact Board: {result['impact_board']}")
+        print_lane_path(result['path'])
 
 if __name__ == "__main__":
     test_stuff()

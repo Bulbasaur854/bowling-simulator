@@ -78,7 +78,7 @@ class PhysicsEngine:
 
                 # As ball hooks, it loses rotation and tilt (roll out)
                 # High friction reduces rotation faster
-                decay_rate = surface_factor * self.TIME_STEP * 2.0
+                decay_rate = surface_factor * current_friction * self.TIME_STEP * 2.0
                 current_rotation = max(0, current_rotation - (decay_rate * 14))
                 current_revs = max(0, current_revs - (decay_rate * 10))
                 # print(f"current rota:\t{current_rotation:.5f}")
