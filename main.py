@@ -29,7 +29,8 @@ def test_stuff():
         approach_drift=0.0, 
         arm_swing_offset=6.0, 
         axis_rotation=25.0, # staying up the back of the ball
-        axis_tilt=15.0,        
+        axis_tilt=15.0,
+        loft_distance=3.0,
         drift_consistency=0.0, target_accuracy=0.0, speed_control=0.0, 
         rev_consistency=0, rotation_consistency=0.0, tilt_consistency=0.0
     )
@@ -41,6 +42,7 @@ def test_stuff():
         arm_swing_offset=5.0, # ball is closer to the body for two-handers
         axis_rotation=65.0, # heavy side-roll
         axis_tilt=5.0, # very end-over-end tilt
+        loft_distance=3.0,
         drift_consistency=0.0, target_accuracy=0.0, speed_control=0.0, 
         rev_consistency=0, rotation_consistency=0.0, tilt_consistency=0.0
     )
@@ -52,6 +54,7 @@ def test_stuff():
         arm_swing_offset=7.0, 
         axis_rotation=10.0, # pure forward roll
         axis_tilt=5.0,
+        loft_distance=3.0,
         drift_consistency=0.0, target_accuracy=0.0, speed_control=0.0, 
         rev_consistency=0, rotation_consistency=0.0, tilt_consistency=0.0
     )
@@ -64,9 +67,9 @@ def test_stuff():
     beginner = Bowler("Straight Shooter", spare_stats)
 
     test_shots = [
-        # (stroker, hyroad, 15.0, 10.0),
-        (two_hander, widow_assassin, 38.0, 20.0),
-        (two_hander, hyroad, 38.0, 20.0),
+        (stroker, hyroad, 15.0, 10.0),
+        # (two_hander, widow_assassin, 38.0, 15.0),
+        # (two_hander, hyroad, 28.0, 20.0),
         # (beginner, white_dot, 15.0, 15.0)
     ]
 

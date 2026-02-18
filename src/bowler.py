@@ -4,11 +4,12 @@ from dataclasses import dataclass
 @dataclass
 class BowlerStats:  
     approach_drift: float           # e.g., +2.0 (Slides left of stance)
-    arm_swing_offset: float         # ----- -7.0 (Ball is 7 boards right of slide)
+    arm_swing_offset: float         # ----- 7.0 (Ball is 7 boards right of slide)
     ball_speed: float               # ----- 17.0 mph
     rev_rate: int                   # ----- 400 rpm
     axis_rotation: float            # ----- 55 degrees
     axis_tilt: float                # ----- 10 degrees
+    loft_distance: float            # ----- 3.0 ft
 
     # Standard deviations to represent skill
     # Value of 0 is the most accurate bowler
@@ -44,5 +45,6 @@ class Bowler:
             "launch_speed": launch_speed,
             "launch_revs": launch_revs,
             "launch_rotation": actual_rotation,
-            "launch_tilt": actual_tilt
+            "launch_tilt": actual_tilt,
+            "loft_distance": self.stats.loft_distance
         }

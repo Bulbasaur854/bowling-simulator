@@ -40,10 +40,18 @@ class PhysicsEngine:
         current_revs = shot_params["launch_revs"]
         current_rotation = shot_params["launch_rotation"]
         current_tilt = shot_params["launch_tilt"]
+        loft_distance = shot_params["loft_distance"]
         path = []
 
         while current_y < 60.0:
             path.append((current_y, current_x)) # store (y, board)
+
+            # If the ball is still in the air, it just moves forward, no friction
+            if current_y < loft_distance:
+                current_y += vel_y * self.TIME_STEP
+                lateral_feet_moved = vel_x * self.TIME_STEP
+                current_x += lateral_feet_moved / self.BOARD_WIDTH_FT
+                continue
 
             # Get lane conditions
             board_to_check = max(1.0, min(39.0, current_x))
