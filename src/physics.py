@@ -17,7 +17,7 @@ class PhysicsEngine:
         ball: Ball object for current throw
         shot_params: Comes from bowler.throw_ball()
         """
-        print("Simulating Shot")
+        print("\nSimulating Shot")
 
         start_x, start_y = shot_params["laydown_point"]
         target_x, target_y = shot_params["actual_target"]

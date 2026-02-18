@@ -66,23 +66,39 @@ def test_stuff():
     two_hander = Bowler("Jason B.", two_hand_stats)
     beginner = Bowler("Straight Shooter", spare_stats)
 
-    test_shots = [
-        (stroker, hyroad, 15.0, 10.0),
-        # (two_hander, widow_assassin, 38.0, 15.0),
-        # (two_hander, hyroad, 28.0, 20.0),
-        # (beginner, white_dot, 15.0, 15.0)
-    ]
+    # INPUT
+    # -----
 
-    for player, ball, stance, target in test_shots:
-        print(f"\n{'*'*50}")
-        print(f" TESTING: {player.name} with {ball.name}")
-        print(f"{'*'*50}")
+    # while True:
+    print(f"\n{'*' * 50}")
+
+    print(f"Lets bowl! Please pick a bowler:\n")
+    print(" 1. Norm D.")
+    print(" 2. Jason B.")
+    print(" 3. New B.")
+    player_choice = int(input("\nAnswer: "))
+    
+    print(f"{'*' * 50}\n")
+
+    while True:
+        stance = float(input("Starting position: "))
+        target = float(input("Aiming target: "))        
         
-        shot_params = player.throw_ball(stance, target)
-        result = physics_engine.simulate_shot(ball, shot_params)
-        
-        print(f"Impact Board: {result['impact_board']}")
-        print_lane_path(result['path'])
+        match (player_choice):
+            case (1):
+                shot_params = stroker.throw_ball(stance, target)
+            case (2):
+                shot_params = two_hander.throw_ball(stance, target)
+            case (3):
+                shot_params = beginner.throw_ball(stance, target)
+            case _:
+                print("Invalid bowler choice!")
+                return
+
+        result = physics_engine.simulate_shot(widow_assassin, shot_params)
+        print_lane_path(result["path"])
+
+
 
 if __name__ == "__main__":
     test_stuff()
