@@ -3,6 +3,7 @@ from src.bowler import Bowler, BowlerStats
 from src.lane import Lane
 from src.physics import PhysicsEngine
 from src.output import print_lane_path
+from src.pindeck import PinDeck
 
 def test_stuff():
     lane = Lane()
@@ -70,7 +71,7 @@ def test_stuff():
     # -----
 
     # while True:
-    print(f"\n{'*' * 50}")
+    print("\n" + "="*55)
 
     print(f"Lets bowl! Please pick a bowler:\n")
     print(" 1. Norm D.")
@@ -78,27 +79,35 @@ def test_stuff():
     print(" 3. New B.")
     player_choice = int(input("\nAnswer: "))
     
-    print(f"{'*' * 50}\n")
+    print("\n" + "="*55)
+    
+    stance = float(input("Starting position: "))
+    target = float(input("Aiming target: "))
+    
+    match (player_choice):
+        case (1):
+            shot_params = stroker.throw_ball(stance, target)
+        case (2):
+            shot_params = two_hander.throw_ball(stance, target)
+        case (3):
+            shot_params = beginner.throw_ball(stance, target)
+        case _:
+            print("Invalid choice!")
 
-    while True:
-        stance = float(input("Starting position: "))
-        target = float(input("Aiming target: "))        
-        
-        match (player_choice):
-            case (1):
-                shot_params = stroker.throw_ball(stance, target)
-            case (2):
-                shot_params = two_hander.throw_ball(stance, target)
-            case (3):
-                shot_params = beginner.throw_ball(stance, target)
-            case _:
-                print("Invalid bowler choice!")
-                return
+    result = physics_engine.simulate_shot(widow_assassin, shot_params)
+    print_lane_path(result["path"])
 
-        result = physics_engine.simulate_shot(widow_assassin, shot_params)
-        print_lane_path(result["path"])
+    print(f"\nImpact board: {result['impact_board']}")
+    print(f"Entry angle: {result['entry_angle']}")
 
+    # New Pin Deck Logic
+    deck = PinDeck()
+    hit_log = deck.process_ball_impact(result["impact_board"], result["entry_angle"])
 
+    for log in hit_log:
+        print(log)
+    print("="*55)
+    
 
 if __name__ == "__main__":
     test_stuff()
