@@ -1,7 +1,6 @@
 from src.ball import Ball
 from src.bowler import Bowler, BowlerStats
 from src.lane import Lane
-from src.physics import PhysicsEngine
 from src.output import *
 from src.pindeck import PinDeck
 
@@ -67,7 +66,6 @@ beginner = Bowler("Straight Shooter", spare_stats)
 
 def test_stuff():
     lane = Lane()
-    physics_engine = PhysicsEngine(lane)
 
     print("\n" + "="*55)
     print(f"Lets bowl! Please pick a bowler:\n")
@@ -90,7 +88,7 @@ def test_stuff():
         case _:
             print("Invalid choice!")
 
-    result = physics_engine.simulate_shot(widow_assassin, shot_params)
+    result = lane.simulate_shot(widow_assassin, shot_params)
     print_lane_path(result["path"])
 
     deck = PinDeck()
