@@ -133,10 +133,6 @@ class PinDeck:
                         
                         hit_log.append(f"  -> Pin {origin_pin.id:2d} took out Pin {target_pin.id:2d} | {hit_type:10s} | Offset: {dist_x:.2f}")
                                                 
-                        self.cast_pin_ray(target_pin, dist_x, hit_log) # RECURSION: the target pin now becomes a flying pin
+                        self.cast_pin_ray(target_pin, dist_x, hit_log) # RECURSION: the target pin now becomes a flying pin                        
                         
-                        # TODO
-                        # What to do after pins hit something?
-                        # What about the walls after the lane?
-                        # Currently, the original pin loses its energy after hitting something, so we stop its raycast
                         return
