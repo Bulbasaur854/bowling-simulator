@@ -35,14 +35,20 @@ class PinDeck:
         # Collision sizes converted to boards
         self.BALL_RADIUS = 4.0 # 8.5 inch diameter / 2 = 4.25 inches (~4 boards)
         self.PIN_RADIUS = 2.2 # 4.75 inch belly / 2 = 2.375 inches (~2.2 boards)
-        self.HIT_THRESHOLD = self.BALL_RADIUS - self.PIN_RADIUS # ~6.2 boards
+        self.HIT_THRESHOLD = self.BALL_RADIUS + self.PIN_RADIUS # ~6.2 boards
 
     def process_ball_impact(self, impact_board, entry_angle):
         """
         Pushes the ball through the 3-foot pin deck to see which pins it directly hits.
         """
-        print(f"\n🎳 --- PIN DECK IMPACT --- 🎳")
+        print("="*55)
+        print(f"🎳 PIN DECK IMPACT 🎳")
+        print("="*55)
         print(f" Ball entered at Board {impact_board:.2f} | Angle: {entry_angle:.2f}°\n")
+
+        if impact_board == -1:
+            print(" ➖ GUTTER... ➖")
+            return
 
         ball_x = impact_board
         ball_y = 60.0
@@ -74,6 +80,9 @@ class PinDeck:
 
                         hit_log.append(f" Hit Pin {pin.id:2d} | {hit_type:10s} | Offset: {offset:.2f} boards")
 
+                        # Trigger the dmonio effect
+                        self.cast_pin_ray(pin, offset, hit_log)
+
                         # Ball deflection
                         deflection = offset * 0.4
                         current_angle += deflection
@@ -84,3 +93,50 @@ class PinDeck:
             ball_y += step_size_ft
         
         return hit_log
+
+    def cast_pin_ray(self, origin_pin, impact_offset, hit_log):
+        """
+        Simulates a pin flying through the deck after being hit.
+        Uses recursion to trigger domino effects.
+        """
+        # Calculate flight path (Lateral drift in boards per foot)
+        # If offset is negative (hit on the right), the pin flies left (positive drift)
+        bounce_factor = 0.85 # Tuning multiplier for how sharply pins bounce
+        drift_rate = -impact_offset * bounce_factor 
+        
+        flying_x = origin_pin.x
+        flying_y = origin_pin.y
+        step_size_ft = 0.1
+                
+        pin_hit_threshold = self.PIN_RADIUS * 2 # pin hitting a pin uses PIN_RADIUS * 2 (approx 4.4 boards)
+        
+        # Raycast backward through the deck
+        while flying_y <= 64.0:
+            flying_y += step_size_ft
+            flying_x += drift_rate * step_size_ft
+            
+            for target_pin in self.pins:
+                if not target_pin.is_standing:
+                    continue
+                
+                # Check if the flying pin crosses the depth (Y) of a standing pin
+                if abs(flying_y - target_pin.y) < 0.2:
+                                        
+                    dist_x = flying_x - target_pin.x # check horizontal collision (X)
+                    
+                    if abs(dist_x) <= pin_hit_threshold:
+                        target_pin.is_standing = False
+                        
+                        hit_type = "Head-on"
+                        if dist_x < -0.5: hit_type = "Right side"
+                        elif dist_x > 0.5: hit_type = "Left side"
+                        
+                        hit_log.append(f"  -> Pin {origin_pin.id:2d} took out Pin {target_pin.id:2d} | {hit_type:10s} | Offset: {dist_x:.2f}")
+                                                
+                        self.cast_pin_ray(target_pin, dist_x, hit_log) # RECURSION: the target pin now becomes a flying pin
+                        
+                        # TODO
+                        # What to do after pins hit something?
+                        # What about the walls after the lane?
+                        # Currently, the original pin loses its energy after hitting something, so we stop its raycast
+                        return

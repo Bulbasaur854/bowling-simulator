@@ -46,3 +46,28 @@ def print_lane_path(path):
         print(f"{target_y:02d}ft |{row_str}|{label}")
         
     print("="*55 + "\n")
+
+def print_pin_deck_result(deck, hit_log):
+    """
+    Takes the simulation results from the PinDeck and formats them 
+    into a clean terminal output, including strike/spare analysis.
+    """
+    if hit_log:
+        for log in hit_log:
+            print(log)
+        print("-" * 55)
+    
+        # Check the total count
+        pins_down = len(hit_log)    
+        if pins_down == 10:
+            print(" ❌ STRIKE! ❌")
+        else:
+            # Find which pins are still standing
+            standing_pins = [str(pin.id) for pin in deck.pins if pin.is_standing]
+            print(f" Count: {pins_down} | Left Standing: {', '.join(standing_pins)}")
+    else:
+        # Corrected from 10 to 0 for a complete miss/gutter
+        print("-" * 55)
+        print(" Count: 0 | Left Standing: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10")
+
+    print("=" * 55 + "\n")

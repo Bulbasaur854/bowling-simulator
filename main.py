@@ -2,7 +2,7 @@ from src.ball import Ball
 from src.bowler import Bowler, BowlerStats
 from src.lane import Lane
 from src.physics import PhysicsEngine
-from src.output import print_lane_path
+from src.output import *
 from src.pindeck import PinDeck
 
 def test_stuff():
@@ -97,17 +97,9 @@ def test_stuff():
     result = physics_engine.simulate_shot(widow_assassin, shot_params)
     print_lane_path(result["path"])
 
-    print(f"\nImpact board: {result['impact_board']}")
-    print(f"Entry angle: {result['entry_angle']}")
-
-    # New Pin Deck Logic
     deck = PinDeck()
-    hit_log = deck.process_ball_impact(result["impact_board"], result["entry_angle"])
-
-    for log in hit_log:
-        print(log)
-    print("="*55)
-    
+    hit_log = deck.process_ball_impact(result["impact_board"], result["entry_angle"])    
+    print_pin_deck_result(deck, hit_log)    
 
 if __name__ == "__main__":
     test_stuff()
