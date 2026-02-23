@@ -1,13 +1,16 @@
 from src.ball import Ball
 from src.bowler import Bowler, BowlerStats
 from src.lane import Lane
-from src.output import *
+from src.io import *
 from src.pindeck import PinDeck
 
 # TODO Currently, the original pin loses its energy after hitting something, so we stop its raycast
 #   What to do after pins hit something?
 #   What about the walls after the lane?
-# TODO Get rid of magic numbers all over
+# TODO Players often have a first shot release, and one for spares
+# TODO Clean up
+#   Get rid of magic numbers
+#   Remove print statements from functions
 
 # BALLS
 # -----
@@ -65,28 +68,15 @@ two_hander = Bowler("Jason B.", two_hand_stats)
 beginner = Bowler("Straight Shooter", spare_stats)
 
 def test_stuff():
-    lane = Lane()
-
-    print("\n" + "="*55)
-    print(f"Lets bowl! Please pick a bowler:\n")
-    print(" 1. Norm D.")
-    print(" 2. Jason B.")
-    print(" 3. New B.")
-    player_choice = int(input("\nAnswer: "))    
-    print("\n" + "="*55)
-    
+    lane = Lane()    
+    player_choice = get_user_bowler()
     stance = float(input("Starting position: "))
     target = float(input("Aiming target: "))
     
     match (player_choice):
-        case (1):
-            shot_params = stroker.throw_ball(stance, target)
-        case (2):
-            shot_params = two_hander.throw_ball(stance, target)
-        case (3):
-            shot_params = beginner.throw_ball(stance, target)
-        case _:
-            print("Invalid choice!")
+        case (1): shot_params = stroker.throw_ball(stance, target)
+        case (2): shot_params = two_hander.throw_ball(stance, target)
+        case (3): shot_params = beginner.throw_ball(stance, target)
 
     result = lane.simulate_shot(widow_assassin, shot_params)
     print_lane_path(result["path"])

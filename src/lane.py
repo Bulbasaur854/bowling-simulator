@@ -1,5 +1,6 @@
 import math
 import numpy as np
+from src.io import print_shot_simulation
 
 class Lane:  
     def __init__(self, name='House Pattern', length_ft=40, oil_ratio=10.0):
@@ -33,11 +34,11 @@ class Lane:
             # For each board, get the distance from the center of the lane (board 19)
             dist_from_center = abs(19 - x)
 
-            if dist_from_center <= 5: # Middle
+            if dist_from_center <= 5: # middle
                 oil_val = 1.0
-            elif dist_from_center <= 12: # Mid-outside
+            elif dist_from_center <= 12: # mid-outside
                 oil_val = 0.5
-            else: # Outside
+            else: # outside
                 oil_val = 0.1
 
             self.grid[x, y] = oil_val * taper
@@ -46,13 +47,13 @@ class Lane:
         """
         Returns the friction coefficient at a specific point.
         Friction is the inverse of oil volume.
-        0 oil   =     1.0 friction (full hook potential)
+        0.0 oil =     1.0 friction (full hook potential)
         1.0 oil =     0.0 friction (skidding)
         
         board:        1.0 to 39.0 (float)
         distance_ft:  0.0 to 60.0 (float)
         """
-        if distance_ft >= 60: return 0.0 # Pin deck is dry
+        if distance_ft >= 60: return 0.0 # pin deck is dry
         
         # Convert physical units to array indices
         x_idx = int(np.clip(board - 1, 0, 38))
@@ -70,23 +71,20 @@ class Lane:
         ball: Ball object for current throw
         shot_params: Comes from bowler.throw_ball()
         """
-        print("\nSimulating Shot")
-
         start_x, start_y = shot_params["laydown_point"]
         target_x, target_y = shot_params["actual_target"]
-        print(f" start: ({start_x:.2f}, {start_y:.2f})\n target: ({target_x:.2f}, {target_y:.2f})")
 
         # Calculate launch vector
         delta_x_ft = (target_x - start_x) * self.BOARD_WIDTH_FT
         delta_y_ft = target_y - start_y
         launch_angle_rad = math.atan2(delta_x_ft, delta_y_ft)
-        print(f" launch angle: {launch_angle_rad:.2f}")
 
         # Get the velocity 
         speed_ft_per_sec = shot_params["launch_speed"] * 1.467 # mph -> feet per second 
         vel_x = speed_ft_per_sec * math.sin(launch_angle_rad)
         vel_y = speed_ft_per_sec * math.cos(launch_angle_rad)
-        print(f" veloc: ({vel_x:.2f}, {vel_y:.2f})")
+
+        print_shot_simulation(start_x, start_y, target_x, target_y, launch_angle_rad, vel_x, vel_y)
 
         current_x = start_x
         current_y = 0.0
@@ -109,7 +107,6 @@ class Lane:
             # Get lane conditions
             board_to_check = max(1.0, min(39.0, current_x))
             current_friction = self.get_friction(board_to_check, current_y)
-            # print(f"\ncurrent fric:\t{current_friction:.2f}")
 
             # Calculate hook acceleration
             # If there is friction, the ball tries to hook
@@ -131,7 +128,6 @@ class Lane:
                     rotation_factor * 
                     bias_boost
                     ) * 0.003
-                # print(f"current hook:\t{hook_accel:.5f}")
 
                 # Apply accelration to velocity
                 # Fromula converts g-force to feet per second
@@ -142,8 +138,6 @@ class Lane:
                 decay_rate = surface_factor * current_friction * self.TIME_STEP * 2.0
                 current_rotation = max(0, current_rotation - (decay_rate * 14))
                 current_revs = max(0, current_revs - (decay_rate * 10))
-                # print(f"current rota:\t{current_rotation:.5f}")
-                # print(f"current revs:\t{current_revs:.5f}")
 
             x_movement_ft = vel_x * self.TIME_STEP
             current_x += x_movement_ft / self.BOARD_WIDTH_FT # convert velocity to boards units

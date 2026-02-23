@@ -136,3 +136,10 @@ class PinDeck:
                         self.cast_pin_ray(target_pin, dist_x, hit_log) # RECURSION: the target pin now becomes a flying pin                        
                         
                         return
+
+    def reset(self):
+        """
+        Resets all pins to a standing state.
+        """
+        for pin in self.pins:
+            pin.is_standing = True
