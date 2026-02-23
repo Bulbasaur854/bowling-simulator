@@ -69,21 +69,58 @@ beginner = Bowler("Straight Shooter", spare_stats)
 
 def test_stuff():
     lane = Lane()    
+    deck = PinDeck()
+
     player_choice = get_user_bowler()
     stance = float(input("Starting position: "))
-    target = float(input("Aiming target: "))
-    
+    target = float(input("Aiming target: "))    
     match (player_choice):
         case (1): shot_params = stroker.throw_ball(stance, target)
         case (2): shot_params = two_hander.throw_ball(stance, target)
         case (3): shot_params = beginner.throw_ball(stance, target)
 
-    result = lane.simulate_shot(widow_assassin, shot_params)
-    print_lane_path(result["path"])
+    # test_2_rolls(lane, player_choice, shot_params, deck)
 
-    deck = PinDeck()
-    hit_log = deck.process_ball_impact(result["impact_board"], result["entry_angle"])    
-    print_pin_deck_result(deck, hit_log)
+def test_2_rolls(lane, player_choice, shot_params, deck):
+    # ==========================
+    #         ROLL 1
+    # ==========================
+    result_1 = lane.simulate_shot(widow_assassin, shot_params)
+    print_lane_path(result_1["path"])
+    
+    hit_log_1 = deck.process_ball_impact(result_1["impact_board"], result_1["entry_angle"])
+    print_pin_deck_result(deck, hit_log_1)
+
+    # Check if we need to throw a second ball
+    standing_pins = [pin for pin in deck.pins if pin.is_standing]    
+    if len(standing_pins) > 0:
+        # ==========================
+        #         ROLL 2
+        # ==========================        
+        stance_2 = float(input("Roll 2 Starting position: "))
+        target_2 = float(input("Roll 2 Aiming target: "))
+        
+        # Re-run the throw logic for the new inputs
+        match (player_choice):
+            case (1): shot_params_2 = stroker.throw_ball(stance_2, target_2)
+            case (2): shot_params_2 = two_hander.throw_ball(stance_2, target_2)
+            case (3): shot_params_2 = beginner.throw_ball(stance_2, target_2)
+            
+        result_2 = lane.simulate_shot(widow_assassin, shot_params_2)
+        print_lane_path(result_2["path"])
+        
+        # Pass the SAME deck into the impact processor!
+        hit_log_2 = deck.process_ball_impact(result_2["impact_board"], result_2["entry_angle"])
+        print_pin_deck_result(deck, hit_log_2)
+        
+        # Final check for spare
+        if len([pin for pin in deck.pins if pin.is_standing]) == 0:
+            print(" SPARE!")
+        else:
+            print(" OPEN FRAME")
+
+    # The frame is over. Reset the deck for the next bowler/frame!
+    deck.reset()
 
 if __name__ == "__main__":
     test_stuff()

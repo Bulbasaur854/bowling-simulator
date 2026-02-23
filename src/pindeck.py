@@ -41,13 +41,7 @@ class PinDeck:
         """
         Pushes the ball through the 3-foot pin deck to see which pins it directly hits.
         """
-        print("="*55)
-        print(f"🎳 PIN DECK IMPACT 🎳")
-        print("="*55)
-        print(f" Ball entered at Board {impact_board:.2f} | Angle: {entry_angle:.2f}°\n")
-
         if impact_board == -1:
-            print(" ➖ GUTTER... ➖")
             return
 
         ball_x = impact_board

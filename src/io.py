@@ -1,24 +1,19 @@
 def get_user_bowler():
-    print("\n" + "="*55)
-    print(f"Lets bowl! Please pick a bowler:\n")
+    print(f"Lets bowl! Please pick a bowler:")
     print(" 1. Norm D.")
     print(" 2. Jason B.")
     print(" 3. New B.")
-    player_choice = int(input("\nAnswer: "))    
-    print("\n" + "="*55)
+    player_choice = int(input("Answer: "))    
     
     return player_choice
 
 def print_shot_simulation(start_x, start_y, target_x, target_y, launch_angle_rad, vel_x, vel_y):
-    print("\nSimulating Shot")
+    print("Simulating Shot")
     print(f" start: ({start_x:.2f}, {start_y:.2f})\n target: ({target_x:.2f}, {target_y:.2f})")
     print(f" launch angle: {launch_angle_rad:.2f}")
     print(f" veloc: ({vel_x:.2f}, {vel_y:.2f})")
 
-def print_lane_path(path):
-    print("\n" + "="*55)
-    print(" 🎳 LANE PATH VISUALIZATION (Top-Down) 🎳")
-    print("="*55)
+def print_lane_path(path):    
     print("      LEFT                               RIGHT")
     print("      39                  20                 1")
     print("      |.......................................|")
@@ -56,8 +51,6 @@ def print_lane_path(path):
         
         print(f"{target_y:02d}ft |{row_str}|{label}") # print the row
 
-    print("="*55 + "\n")
-
 def print_pin_deck_result(deck, hit_log):
     """
     Takes the simulation results from the PinDeck and formats them 
@@ -66,18 +59,14 @@ def print_pin_deck_result(deck, hit_log):
     if hit_log:
         for log in hit_log:
             print(log)
-        print("-"*55)
     
         # Check the total count
         pins_down = len(hit_log)    
         if pins_down == 10:
-            print(" ❌ STRIKE! ❌")
+            print(" STRIKE!")
         else:
             # Find which pins are still standing
             standing_pins = [str(pin.id) for pin in deck.pins if pin.is_standing]
             print(f" Count: {pins_down} | Left Standing: {', '.join(standing_pins)}")
     else:
-        print("-"*55)
         print(" Count: 0 | Left Standing: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10")
-
-    print("="*55 + "\n")
