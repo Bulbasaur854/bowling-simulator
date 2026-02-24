@@ -3,6 +3,7 @@ from src.bowler import Bowler, BowlerStats
 from src.lane import Lane
 from src.io import *
 from src.pindeck import PinDeck
+from src.scorecard import Scorecard
 
 # TODO Currently, the original pin loses its energy after hitting something, so we stop its raycast
 #   What to do after pins hit something?
@@ -68,9 +69,15 @@ two_hander = Bowler("Jason B.", two_hand_stats)
 beginner = Bowler("Straight Shooter", spare_stats)
 
 def test_stuff():
-    lane = Lane()    
+    test_2_rolls()
+    test_scorecard()
+    pass    
+
+def test_2_rolls():
+    lane = Lane()
     deck = PinDeck()
 
+    print("\n🎳 --- RUNNING 2 ROLLS TEST --- 🎳")
     player_choice = get_user_bowler()
     stance = float(input("Starting position: "))
     target = float(input("Aiming target: "))    
@@ -79,9 +86,6 @@ def test_stuff():
         case (2): shot_params = two_hander.throw_ball(stance, target)
         case (3): shot_params = beginner.throw_ball(stance, target)
 
-    # test_2_rolls(lane, player_choice, shot_params, deck)
-
-def test_2_rolls(lane, player_choice, shot_params, deck):
     # ==========================
     #         ROLL 1
     # ==========================
@@ -121,6 +125,50 @@ def test_2_rolls(lane, player_choice, shot_params, deck):
 
     # The frame is over. Reset the deck for the next bowler/frame!
     deck.reset()
+
+def test_scorecard():
+    print("\n🎳 --- RUNNING SCORECARD MATH TESTS --- 🎳")
+    
+    # Test 1: The Perfect Game (12 Strikes)
+    perfect_game = [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10]
+    test_run_score("Perfect Game", perfect_game, 300)
+    
+    # Test 2: The Gutter Game (20 zeroes)
+    gutter_game = [0] * 20
+    test_run_score("Gutter Game", gutter_game, 0)
+    
+    # Test 3: The All-Spare Game (Nine then a spare, 10 times, plus a bonus 9)
+    # Math: Every frame scores exactly 19 points. 19 * 10 = 190.
+    spare_game = [9, 1, 9, 1, 9, 1, 9, 1, 9, 1, 9, 1, 9, 1, 9, 1, 9, 1, 9, 1, 9]
+    test_run_score("All Spares (9/)", spare_game, 190)
+    
+    # Test 4: A Normal Game (Mix of strikes, spares, opens, and a messy 10th frame)
+    # Frame 1: 8, 1 (Open -> 9)
+    # Frame 2: 10 (Strike -> Pending)
+    # Frame 3: 7, 3 (Spare -> Pending)
+    # Frame 4: 5, 4 (Open -> Frame 3 gets 15, Frame 2 gets 20. Total: 9+20+15+9 = 53)
+    normal_game = [8, 1, 10, 7, 3, 5, 4, 10, 10, 10, 8, 2, 9, 0, 10, 10, 8]
+    test_run_score("Typical Mixed Game", normal_game, 187)
+    
+    print("-" * 50 + "\n")
+
+def test_run_score(test_name, rolls_array, expected_score):
+    """Feeds an array of rolls into a new scorecard and checks the result."""
+    scorecard = Scorecard()
+    
+    for pins in rolls_array:
+        scorecard.record_roll(pins)
+        
+    # Get the score of the 10th frame
+    final_score = scorecard.frames[9].display_score
+    
+    # Print the result
+    match = "✅ PASS" if final_score == expected_score else "❌ FAIL"
+    print(f"{match} | {test_name:<18} | Expected: {expected_score:3d} | Got: {str(final_score):>3s}")
+    
+    # Optional: Print the frame-by-frame breakdown for debugging
+    # for f in scorecard.frames:
+    #     print(f"  Frame {f.frame_number}: Rolls {f.rolls} -> Score: {f.display_score}")
 
 if __name__ == "__main__":
     test_stuff()
