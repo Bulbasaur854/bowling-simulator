@@ -69,9 +69,8 @@ two_hander = Bowler("Jason B.", two_hand_stats)
 beginner = Bowler("Straight Shooter", spare_stats)
 
 def test_stuff():
-    test_2_rolls()
+    # test_2_rolls()
     test_scorecard()
-    pass    
 
 def test_2_rolls():
     lane = Lane()
@@ -166,9 +165,7 @@ def test_run_score(test_name, rolls_array, expected_score):
     match = "✅ PASS" if final_score == expected_score else "❌ FAIL"
     print(f"{match} | {test_name:<18} | Expected: {expected_score:3d} | Got: {str(final_score):>3s}")
     
-    # Optional: Print the frame-by-frame breakdown for debugging
-    # for f in scorecard.frames:
-    #     print(f"  Frame {f.frame_number}: Rolls {f.rolls} -> Score: {f.display_score}")
+    print_scorecard(scorecard)
 
 if __name__ == "__main__":
     test_stuff()

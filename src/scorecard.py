@@ -21,7 +21,7 @@ class Frame:
 class Scorecard:
     def __init__(self):
         self.frames = [Frame(i) for i in range(1, 11)]
-        self.row_rolls = []
+        self.raw_rolls = []
         self.current_frame_index = 0
 
     def record_roll(self, pins_down):
@@ -30,7 +30,7 @@ class Scorecard:
             return # game is over
 
         # Add the current roll score to both the frame and the scorecard 
-        self.row_rolls.append(pins_down)
+        self.raw_rolls.append(pins_down)
         current_frame = self.frames[self.current_frame_index]
         current_frame.rolls.append(pins_down)
 
@@ -67,21 +67,21 @@ class Scorecard:
             frame = self.frames[i]
             
             # if we haven't reached this frame in the rolls yet, stop calculating
-            if roll_index >= len(self.row_rolls):
+            if roll_index >= len(self.raw_rolls):
                 break
                 
             if frame.frame_number < 10:
                 if frame.status == "Strike":
                     # look ahead 2 rolls
-                    if roll_index + 2 < len(self.row_rolls):
-                        running_total += 10 + self.row_rolls[roll_index+1] + self.row_rolls[roll_index+2]
+                    if roll_index + 2 < len(self.raw_rolls):
+                        running_total += 10 + self.raw_rolls[roll_index+1] + self.raw_rolls[roll_index+2]
                         frame.display_score = running_total
                     roll_index += 1 # strike consumes 1 roll in the flat list
                     
                 elif frame.status == "Spare":
                     # look ahead to next frame's 1 roll
-                    if roll_index + 2 < len(self.row_rolls):
-                        running_total += 10 + self.row_rolls[roll_index+2]
+                    if roll_index + 2 < len(self.raw_rolls):
+                        running_total += 10 + self.raw_rolls[roll_index+2]
                         frame.display_score = running_total
                     roll_index += 2 # spare consumes 2 rolls
                     
