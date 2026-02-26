@@ -40,18 +40,23 @@ def get_throw_or_change(current_ball):
     """
     Get user choice to change ball or not.
     """
-    print(f"Current Ball: {current_ball.name}")
-    action = input("[T]hrow or [C]hange Ball? ").upper()
-
-    return action
+    while True:
+        print(f"Current Ball: {current_ball.name}")
+        action = input("[T]hrow or [C]hange Ball? ").strip().upper()
+        if action in {"T", "C"}:
+            return action
+        print("Please enter T or C.")
 
 def get_valid_input(request_string):
     """
     Get user input and clamp between 1 and 39
     """
-    ans = int(input(request_string))
-
-    return max(1, min(ans, 39))
+    while True:
+        try:
+            ans = int(input(request_string))
+            return max(1, min(ans, 39))
+        except ValueError:
+            print("Please enter a number.")
 
 def print_shot_simulation(start_x, start_y, target_x, target_y, launch_angle_rad, vel_x, vel_y):
     """
@@ -126,7 +131,8 @@ def print_pin_deck_result(deck, hit_log, current_frame):
             else:
                 print(f" Count: {pins_down} | Left Standing: {', '.join(standing_pins)}")
     else:
-        print(" Count: 0 | Left Standing: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10")
+        standing_pins = [str(pin.id) for pin in deck.pins if pin.is_standing]
+        print(f" Count: 0 | Left Standing: {', '.join(standing_pins)}")
 
 def print_scorecard(scorecard):
     """

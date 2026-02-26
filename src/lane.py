@@ -29,19 +29,19 @@ class Lane:
             # Calculate 'taper' factor to make oil thinner down the lane
             taper = 1.0 - (y / length_units) * 0.5
 
-        for x in range(39):
-            # Board indexes are 0-38
-            # For each board, get the distance from the center of the lane (board 19)
-            dist_from_center = abs(19 - x)
+            for x in range(39):
+                # Board indexes are 0-38
+                # For each board, get the distance from the center of the lane (board 19)
+                dist_from_center = abs(19 - x)
 
-            if dist_from_center <= 5: # middle
-                oil_val = 1.0
-            elif dist_from_center <= 12: # mid-outside
-                oil_val = 0.5
-            else: # outside
-                oil_val = 0.1
+                if dist_from_center <= 5: # middle
+                    oil_val = 1.0
+                elif dist_from_center <= 12: # mid-outside
+                    oil_val = 0.5
+                else: # outside
+                    oil_val = 0.1
 
-            self.grid[x, y] = oil_val * taper
+                self.grid[x, y] = oil_val * taper
 
     def get_friction(self, board, distance_ft):
         """

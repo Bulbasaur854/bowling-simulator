@@ -26,7 +26,7 @@ class Scorecard:
 
     def record_roll(self, pins_down):
         """Logs a roll, updates current frame status and recalculates score"""
-        if self.current_frame_index >= 10:
+        if self.current_frame_index >= 10 or self.frames[9].is_done():
             return # game is over
 
         # Add the current roll score to both the frame and the scorecard 
@@ -55,6 +55,8 @@ class Scorecard:
         # Move to next frame if done
         if current_frame.is_done() and self.current_frame_index < 9:
             self.current_frame_index += 1
+        elif current_frame.frame_number == 10 and current_frame.is_done():
+            self.current_frame_index = 10
             
         self.recalculate_scores()
 
