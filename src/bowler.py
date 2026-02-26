@@ -1,6 +1,6 @@
 import random
 from dataclasses import dataclass
-
+# TODO Players often have a first shot release, and one for spares
 @dataclass
 class BowlerStats:  
     approach_drift: float           # e.g., +2.0 (Slides left of stance)
@@ -25,7 +25,7 @@ class Bowler:
         self.name = name
         self.stats = stats
 
-    def throw_ball(self, stance_board, target_board):
+    def approach(self, stance_board, target_board):
         actual_drift = random.gauss(self.stats.approach_drift, self.stats.drift_consistency)
         slide_point = stance_board + actual_drift
         laydown_point = slide_point - self.stats.arm_swing_offset
