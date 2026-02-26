@@ -21,9 +21,11 @@ class BowlerStats:
     tilt_consistency: float         # -------- in spin axis (e.g., +/- 2 degrees)
 
 class Bowler:
-    def __init__(self, name, stats: BowlerStats):
+    def __init__(self, name, stats: BowlerStats, strike_balls: list, spare_ball):
         self.name = name
         self.stats = stats
+        self.strike_balls = strike_balls
+        self.spare_ball = spare_ball
 
     def approach(self, stance_board, target_board):
         actual_drift = random.gauss(self.stats.approach_drift, self.stats.drift_consistency)

@@ -20,7 +20,7 @@ from src.constants import LANE_BOARDS, MIN_BOARD, TOTAL_FRAMES
 from src.lane import Lane
 from src.pindeck import PinDeck
 from src.scorecard import Scorecard
-from src.roster import AVAILABLE_BOWLERS, AVAILABLE_BALLS 
+from src.roster import AVAILABLE_BOWLERS
 
 def main():
     play_game()
@@ -30,7 +30,7 @@ def play_game():
     # --------
     print_welcome_screen()
     bowler = get_user_bowler(AVAILABLE_BOWLERS)
-    current_ball = get_user_ball(AVAILABLE_BALLS)
+    current_ball = get_user_ball(bowler.strike_balls)
 
     lane = Lane()
     deck = PinDeck()
@@ -51,8 +51,10 @@ def play_game():
         # Pre-shot menu
         action = get_throw_or_change(current_ball).upper()
         if action == "C":
-            current_ball = get_user_ball(AVAILABLE_BALLS)
+            current_ball = get_user_ball(bowler.strike_balls)
             continue # restart the loop to update HUD
+        if action == "S":
+            current_ball = bowler.spare_ball
         if action == "Q":
             user_quit = True
             break

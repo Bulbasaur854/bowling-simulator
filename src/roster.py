@@ -13,10 +13,9 @@ two_hand_stats = BowlerStats(rev_rate=550, ball_speed=18.5, approach_drift=4.0, 
 spare_stats = BowlerStats(rev_rate=150, ball_speed=19.0, approach_drift=0.0, arm_swing_offset=7.0, axis_rotation=10.0, axis_tilt=5.0, loft_distance=3.0, drift_consistency=0.0, target_accuracy=0.0, speed_control=0.0, rev_consistency=0, rotation_consistency=0.0, tilt_consistency=0.0)
 
 # --- BOWLERS ---
-stroker = Bowler("Norm D.", stroker_stats)
-two_hander = Bowler("Jason B.", two_hand_stats)
-beginner = Bowler("Straight Shooter", spare_stats)
+stroker = Bowler("Norm D.", stroker_stats, strike_balls=[hyroad, widow_assassin], spare_ball=white_dot)
+two_hander = Bowler("Jason B.", two_hand_stats, strike_balls=[hyroad, widow_assassin], spare_ball=white_dot)
+beginner = Bowler("Straight Shooter", spare_stats, strike_balls=[hyroad, widow_assassin], spare_ball=white_dot)
 
 # --- EXPORT LISTS ---
 AVAILABLE_BOWLERS = [stroker, two_hander, beginner]
-AVAILABLE_BALLS = [hyroad, widow_assassin, white_dot]

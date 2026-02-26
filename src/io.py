@@ -46,14 +46,14 @@ def get_user_ball(ball_list):
 
 def get_throw_or_change(current_ball):
     """
-    Get user choice to change ball or not.
+    Get user pre-shot action.
     """
     while True:
         print(f"Current Ball: {current_ball.name}")
-        action = input("[T]hrow or [C]hange Ball? [Q]uit ").strip().upper()
-        if action in {"T", "C", "Q"}:
+        action = input("[T]hrow, [C]hange Ball, [S]pare Ball, or [Q]uit? ").strip().upper()
+        if action in {"T", "C", "S", "Q"}:
             return action
-        print("Please enter T, C, or Q.")
+        print("Please enter T, C, S, or Q.")
 
 def get_valid_input(request_string):
     """
