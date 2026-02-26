@@ -1,3 +1,8 @@
+# TODO Add a way to quit the game elegantly
+# TODO Make it so the oil on lane gets "pushed"
+# TODO Players often have a first shot release, and one for spares
+# TODO The original pin loses its energy after hitting something, so we stop its raycast. What to do after pins hit something? What about the walls after the lane?
+
 from src.io import (
     clear_terminal,
     get_throw_or_change,
@@ -11,13 +16,11 @@ from src.io import (
     print_scorecard,
     print_welcome_screen,
 )
+from src.constants import LANE_BOARDS, MIN_BOARD, TOTAL_FRAMES
 from src.lane import Lane
 from src.pindeck import PinDeck
 from src.scorecard import Scorecard
 from src.roster import AVAILABLE_BOWLERS, AVAILABLE_BALLS 
-
-# TODO Clean up - get rid of magic numbers and remove print statements from functions
-# TODO Add a way to quit the game elegantly
 
 def main():
     play_game()
@@ -35,7 +38,7 @@ def play_game():
 
     # Main loop
     # ---------
-    while scorecard.current_frame_index < 10:
+    while scorecard.current_frame_index < TOTAL_FRAMES:
         # Update the HUD
         clear_terminal()
         print_scorecard(scorecard)
@@ -51,8 +54,8 @@ def play_game():
             continue # restart the loop to update HUD
 
         # Get shot input
-        stance = get_valid_input("Starting Position (1-39): ")
-        target = get_valid_input("Aiming Target (1-39): ")
+        stance = get_valid_input(f"Starting Position ({MIN_BOARD}-{LANE_BOARDS}): ")
+        target = get_valid_input(f"Aiming Target ({MIN_BOARD}-{LANE_BOARDS}): ")
 
         # The simulation
         release_params = bowler.approach(stance, target)

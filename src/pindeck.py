@@ -1,7 +1,5 @@
 import math
-# TODO Currently, the original pin loses its energy after hitting something, so we stop its raycast
-#   What to do after pins hit something?
-#   What about the walls after the lane?
+
 class Pin:
     def __init__(self, id, x, y):
         self.id = id

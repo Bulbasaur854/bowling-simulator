@@ -1,4 +1,12 @@
 import os, subprocess
+from src.constants import (
+    FINAL_FRAME_INDEX,
+    LANE_BOARDS,
+    MAX_PINS,
+    MIN_BOARD,
+    REGULAR_FRAMES,
+    TOTAL_FRAMES,
+)
 
 def get_user_bowler(bowler_list):
     """
@@ -49,12 +57,12 @@ def get_throw_or_change(current_ball):
 
 def get_valid_input(request_string):
     """
-    Get user input and clamp between 1 and 39
+    Get user input and clamp between MIN_BOARD and LANE_BOARDS.
     """
     while True:
         try:
             ans = int(input(request_string))
-            return max(1, min(ans, 39))
+            return max(MIN_BOARD, min(ans, LANE_BOARDS))
         except ValueError:
             print("Please enter a number.")
 
@@ -72,7 +80,7 @@ def print_lane_path(path):
     Takes a ball movement path and prints it nicely to terminal.
     """    
     print("      LEFT                               RIGHT")
-    print("      39                  20                 1")
+    print(f"      {LANE_BOARDS}                  {(LANE_BOARDS + 1) // 2}                 {MIN_BOARD}")
     print("      |.......................................|")
     
     # Step backwards from 60ft to 0ft in 2-foot increments
@@ -81,21 +89,21 @@ def print_lane_path(path):
         closest_point = min(path, key=lambda p: abs(p[0] - target_y))
         board_x = closest_point[1]        
         
-        row_chars = ['.'] * 39 # default lane background
+        row_chars = ['.'] * LANE_BOARDS # default lane background
         
         # Draw Arrows around 14ft-16ft
         if target_y == 14 or target_y == 16:
             for arrow in [5, 10, 15, 20, 25, 30, 35]:
-                arrow_idx = int(39 - arrow) # mirror for visual Left/Right
+                arrow_idx = int(LANE_BOARDS - arrow) # mirror for visual Left/Right
                 row_chars[arrow_idx] = '^'
                 
         # Draw the Ball ('O')
-        if board_x < 0.5:            
+        if board_x < (MIN_BOARD - 0.5):            
             row_str = "".join(row_chars) + "O" # right Gutter
-        elif board_x > 39.5: 
+        elif board_x > (LANE_BOARDS + 0.5): 
             row_str = "O" + "".join(row_chars) # left Gutter
         else:
-            char_idx = int(39 - round(board_x)) # convert board 1-39 to string index 38-0
+            char_idx = int(LANE_BOARDS - round(board_x)) # convert board number to string index
             row_chars[char_idx] = 'O'
             row_str = " " + "".join(row_chars) + " "
 
@@ -118,7 +126,7 @@ def print_pin_deck_result(deck, hit_log, current_frame):
     
         # Check the total count
         pins_down = len(hit_log)    
-        if pins_down == 10:
+        if pins_down == MAX_PINS:
             if len(current_frame.rolls) == 0:
                 print(" STRIKE!")
             else:
@@ -141,27 +149,27 @@ def print_scorecard(scorecard):
     print("\n" + "=" * 65)
     
     # Header Row (Frame Numbers)
-    header = "|" + "|".join([f"  {i}  " for i in range(1, 10)]) + "|   10   |"
+    header = "|" + "|".join([f"  {i}  " for i in range(MIN_BOARD, REGULAR_FRAMES + 1)]) + f"|   {TOTAL_FRAMES}   |"
     print(header)
     print("-" * 65)
     
     # Rolls Row (X, /, -)
     rolls_str = "|"
-    for i in range(9):
+    for i in range(REGULAR_FRAMES):
         val = format_frame_rolls(scorecard.frames[i])
         rolls_str += f" {val} |"
-    val10 = format_frame_10(scorecard.frames[9])
+    val10 = format_frame_10(scorecard.frames[FINAL_FRAME_INDEX])
     rolls_str += f" {val10}  |"
     print(rolls_str)
     
     # Scores Row (Running Totals)
     scores_str = "|"
-    for i in range(9):
+    for i in range(REGULAR_FRAMES):
         score = scorecard.frames[i].display_score
         s_str = str(score) if score is not None else ""
         scores_str += f"{s_str:^5}|"
         
-    score10 = scorecard.frames[9].display_score
+    score10 = scorecard.frames[FINAL_FRAME_INDEX].display_score
     s_str10 = str(score10) if score10 is not None else ""
     scores_str += f"{s_str10:^8}|"
     print(scores_str)
@@ -186,7 +194,7 @@ def print_current_state(current_frame, deck):
     
     print(f"\n--- FRAME {current_frame.frame_number} | BALL {ball_number} ---")
     
-    if len(standing_pins) == 10:
+    if len(standing_pins) == MAX_PINS:
         print(" Target: Full rack standing.")
     elif len(standing_pins) == 0:
         print(" Target: None. (Waiting for deck reset...)")
@@ -201,7 +209,7 @@ def print_end_game_scorecard(scorecard):
     """
     print_scorecard(scorecard)
     print("GAME OVER\n" + '-'*9)
-    print(f"Final Score: {scorecard.frames[9].display_score}")
+    print(f"Final Score: {scorecard.frames[FINAL_FRAME_INDEX].display_score}")
 
 def format_frame_rolls(frame):
     """
@@ -210,14 +218,14 @@ def format_frame_rolls(frame):
     if not frame.rolls:
         return "   "
     if len(frame.rolls) == 1:
-        if frame.rolls[0] == 10:
+        if frame.rolls[0] == MAX_PINS:
             return " X "
         else:
             r1 = "-" if frame.rolls[0] == 0 else str(frame.rolls[0])
             return f"{r1}  "
     if len(frame.rolls) == 2:
         r1 = "-" if frame.rolls[0] == 0 else str(frame.rolls[0])
-        if sum(frame.rolls) == 10:
+        if sum(frame.rolls) == MAX_PINS:
             r2 = "/"
         else:
             r2 = "-" if frame.rolls[1] == 0 else str(frame.rolls[1])
@@ -232,18 +240,18 @@ def format_frame_10(frame):
     
     strs = []
     for i, r in enumerate(frame.rolls):
-        if r == 10:
+        if r == MAX_PINS:
             # Check if this 10 is actually picking up a spare (e.g., 0 on roll 1, 10 on roll 2)
-            if i == 1 and frame.rolls[0] < 10 and frame.rolls[0] + r == 10:
+            if i == 1 and frame.rolls[0] < MAX_PINS and frame.rolls[0] + r == MAX_PINS:
                 strs.append("/")
             else:
                 strs.append("X")
         elif r == 0:
             strs.append("-")
         else:
-            if i == 1 and frame.rolls[0] + r == 10:
+            if i == 1 and frame.rolls[0] + r == MAX_PINS:
                 strs.append("/")
-            elif i == 2 and frame.rolls[0] == 10 and frame.rolls[1] < 10 and frame.rolls[1] + r == 10:
+            elif i == 2 and frame.rolls[0] == MAX_PINS and frame.rolls[1] < MAX_PINS and frame.rolls[1] + r == MAX_PINS:
                 strs.append("/")
             else:
                 strs.append(str(r))

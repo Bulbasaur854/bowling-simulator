@@ -1,6 +1,6 @@
 import random
 from dataclasses import dataclass
-# TODO Players often have a first shot release, and one for spares
+
 @dataclass
 class BowlerStats:  
     approach_drift: float           # e.g., +2.0 (Slides left of stance)
