@@ -50,10 +50,10 @@ def get_throw_or_change(current_ball):
     """
     while True:
         print(f"Current Ball: {current_ball.name}")
-        action = input("[T]hrow or [C]hange Ball? ").strip().upper()
-        if action in {"T", "C"}:
+        action = input("[T]hrow or [C]hange Ball? [Q]uit ").strip().upper()
+        if action in {"T", "C", "Q"}:
             return action
-        print("Please enter T or C.")
+        print("Please enter T, C, or Q.")
 
 def get_valid_input(request_string):
     """
@@ -210,6 +210,13 @@ def print_end_game_scorecard(scorecard):
     print_scorecard(scorecard)
     print("GAME OVER\n" + '-'*9)
     print(f"Final Score: {scorecard.frames[FINAL_FRAME_INDEX].display_score}")
+
+def print_quit_game_scorecard(scorecard):
+    """
+    Outputs scorecard when user quits early.
+    """
+    print_scorecard(scorecard)
+    print("GAME ENDED EARLY\n" + '-'*16)
 
 def format_frame_rolls(frame):
     """

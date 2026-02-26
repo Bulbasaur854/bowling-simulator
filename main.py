@@ -1,4 +1,3 @@
-# TODO Add a way to quit the game elegantly
 # TODO Make it so the oil on lane gets "pushed"
 # TODO Players often have a first shot release, and one for spares
 # TODO The original pin loses its energy after hitting something, so we stop its raycast. What to do after pins hit something? What about the walls after the lane?
@@ -11,6 +10,7 @@ from src.io import (
     get_valid_input,
     print_current_state,
     print_end_game_scorecard,
+    print_quit_game_scorecard,
     print_lane_path,
     print_pin_deck_result,
     print_scorecard,
@@ -35,6 +35,7 @@ def play_game():
     lane = Lane()
     deck = PinDeck()
     scorecard = Scorecard()
+    user_quit = False
 
     # Main loop
     # ---------
@@ -52,6 +53,9 @@ def play_game():
         if action == "C":
             current_ball = get_user_ball(AVAILABLE_BALLS)
             continue # restart the loop to update HUD
+        if action == "Q":
+            user_quit = True
+            break
 
         # Get shot input
         stance = get_valid_input(f"Starting Position ({MIN_BOARD}-{LANE_BOARDS}): ")
@@ -76,7 +80,10 @@ def play_game():
     # Post-game
     # ---------
     clear_terminal()
-    print_end_game_scorecard(scorecard)
+    if user_quit:
+        print_quit_game_scorecard(scorecard)
+    else:
+        print_end_game_scorecard(scorecard)
 
 if __name__ == "__main__":
     main()
