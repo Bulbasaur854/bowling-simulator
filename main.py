@@ -1,5 +1,4 @@
 # TODO Make it so the oil on lane gets "pushed"
-# TODO Players often have a first shot release, and one for spares
 # TODO The original pin loses its energy after hitting something, so we stop its raycast. What to do after pins hit something? What about the walls after the lane?
 
 from src.io import (
@@ -16,11 +15,32 @@ from src.io import (
     print_scorecard,
     print_welcome_screen,
 )
-from src.constants import LANE_BOARDS, MIN_BOARD, TOTAL_FRAMES
 from src.lane import Lane
 from src.pindeck import PinDeck
 from src.scorecard import Scorecard
 from src.roster import AVAILABLE_BOWLERS
+from src.constants import LANE_BOARDS, MAX_PINS, MIN_BOARD, TOTAL_FRAMES
+
+def should_reset_deck_after_roll(frame):
+    """
+    Determine whether pins should be reset before the next shot.
+    """
+    if frame.frame_number < TOTAL_FRAMES:
+        return frame.is_done()
+
+    # 10th-frame deck reset rules:
+    # - Strike on first ball -> reset for second ball
+    # - Spare in first two balls -> reset for first ball
+    # - Double in first two balls -> reset for third ball
+    if len(frame.rolls) == 1:
+        return frame.rolls[0] == MAX_PINS
+    if len(frame.rolls) == 2:
+        first, second = frame.rolls
+        if first == MAX_PINS and second == MAX_PINS:
+            return True
+        if first < MAX_PINS and first + second == MAX_PINS:
+            return True
+    return False
 
 def main():
     play_game()
@@ -74,7 +94,7 @@ def play_game():
         knocked_pins = len(hit_log) if hit_log else 0
         scorecard.record_roll(knocked_pins)
 
-        if current_frame.is_done():
+        if should_reset_deck_after_roll(current_frame):
             deck.reset()
         
         input("\nPress Enter to continue...")
